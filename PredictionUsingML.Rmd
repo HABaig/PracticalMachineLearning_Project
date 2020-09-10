@@ -22,7 +22,7 @@ Class 'A' corresponds to the specified execution of the exercise, whereas the ot
 
 ##1. Data dowload and cleaning
 Install the libraries needed for this analysis
-```{r}
+```{r, echo=FALSE}
 library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
 ```
 
@@ -53,7 +53,8 @@ Index <- createDataPartition(train$classe, p = 0.7, list = FALSE)
 training <- train[Index,]
 testing <- train[-Index,]
 ```
-We will build 3 model and use the best model for prediction
+
+We will build 3 models using different ML algorithms and use the best model for prediction.
 
 ###2.1. Cart (Classification and Regression Treess)
 ```{r}
@@ -64,6 +65,7 @@ cart_predict <- predict(cart, testing)
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 cart_cm<- confusionMatrix(cart_predict, testing$classe)
 cart_acc<- cart_cm[["overall"]][["Accuracy"]]*100
+cart_acc
 ```
 Use rattle library to plot the decision tree of the final model.
 ```{r}
@@ -82,10 +84,10 @@ gbm <- train( classe ~ .,data=training,  method='gbm',
 gbm
 #Predict
 gbm_predict <- predict(gbm, testing)
-
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 gbm_cm<- confusionMatrix(gbm_predict, testing$classe)
 gbmacc<- gbm_cm[["overall"]][["Accuracy"]]*100
+gbmacc
 ```
 
 ###2.3. Random Forest Model
@@ -108,15 +110,16 @@ rf_predict <- predict(rf, testing)
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 rf_cm<- confusionMatrix(rf_predict, testing$classe)
 rfacc<- rf_cm[["overall"]][["Accuracy"]] *100
+rfacc
 ```
 
 Combine the accuracy results into a table
 ```{r}
 t<- data.frame()
 t<- cbind(gbmacc, cart_acc, rfacc)
+t
 ```
-The results how that random forest has the best predictive ability so we will use random forest to make final prediction. 
-
+The results how that random forest has the highest accuracy so we will use random forest to make final prediction. 
 
 ## 3. Predicting on the test set.
 We can predict the outcome (How a person in each case is predicted to perform). Outcome of each case would be A,B,C,D or E depending upon the prediction. As random forest model has the best accuracy , we use rf to predict the outcome of our test cases.
@@ -124,3 +127,8 @@ We can predict the outcome (How a person in each case is predicted to perform). 
 rf_final <- predict(rf, test)
 rf_final
 ```
+
+###Out of Sample Error
+Out of sample error is estimated as 1 - accuracy for predictions for cross-validation set. 
+So out of sample error for the final model is 1- 0.98 = 0.02.
+
