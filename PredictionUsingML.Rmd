@@ -130,5 +130,4 @@ rf_final
 
 ###Out of Sample Error
 Out of sample error is estimated as 1 - accuracy for predictions for cross-validation set. 
-So out of sample error for the final model is 1- 0.98 = 0.02.
-
+So out of sample error for the final model is 1- 0.992 = 0.0078
