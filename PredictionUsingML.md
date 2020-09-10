@@ -21,10 +21,6 @@ Class 'A' corresponds to the specified execution of the exercise, whereas the ot
 ##1. Data dowload and cleaning
 Install the libraries needed for this analysis
 
-```r
-library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
-```
-
 ```
 ## Warning: package 'dplyr' was built under R version 3.6.3
 ```
@@ -99,7 +95,8 @@ Index <- createDataPartition(train$classe, p = 0.7, list = FALSE)
 training <- train[Index,]
 testing <- train[-Index,]
 ```
-We will build 3 model and use the best model for prediction
+
+We will build 3 models using different ML algorithms and use the best model for prediction.
 
 ###2.1. Cart (Classification and Regression Treess)
 
@@ -111,6 +108,11 @@ cart_predict <- predict(cart, testing)
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 cart_cm<- confusionMatrix(cart_predict, testing$classe)
 cart_acc<- cart_cm[["overall"]][["Accuracy"]]*100
+cart_acc
+```
+
+```
+## [1] 50.26338
 ```
 Use rattle library to plot the decision tree of the final model.
 
@@ -171,15 +173,15 @@ gbm
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa    
-##   1                   50      0.7479070  0.6803542
-##   1                  100      0.8215768  0.7740782
-##   1                  150      0.8523692  0.8131177
-##   2                   50      0.8540442  0.8150290
-##   2                  100      0.9098786  0.8859239
-##   2                  150      0.9329546  0.9151629
-##   3                   50      0.8948092  0.8668274
-##   3                  100      0.9426362  0.9274049
-##   3                  150      0.9602524  0.9497034
+##   1                   50      0.7494357  0.6822006
+##   1                  100      0.8174994  0.7689336
+##   1                  150      0.8521509  0.8128781
+##   2                   50      0.8523685  0.8128948
+##   2                  100      0.9063103  0.8813916
+##   2                  150      0.9333184  0.9156002
+##   3                   50      0.8931345  0.8646568
+##   3                  100      0.9419807  0.9265683
+##   3                  150      0.9611987  0.9509099
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## 
@@ -192,10 +194,14 @@ gbm
 ```r
 #Predict
 gbm_predict <- predict(gbm, testing)
-
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 gbm_cm<- confusionMatrix(gbm_predict, testing$classe)
 gbmacc<- gbm_cm[["overall"]][["Accuracy"]]*100
+gbmacc
+```
+
+```
+## [1] 96.48258
 ```
 
 ###2.3. Random Forest Model
@@ -248,14 +254,14 @@ rf <- randomForest(classe ~., data=training); rf
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 7
 ## 
-##         OOB estimate of  error rate: 0.54%
+##         OOB estimate of  error rate: 0.47%
 ## Confusion matrix:
-##      A    B    C    D    E class.error
-## A 3901    4    1    0    0 0.001280082
-## B   14 2640    4    0    0 0.006772009
-## C    0   13 2381    2    0 0.006260434
-## D    0    0   26 2223    3 0.012877442
-## E    0    0    1    6 2518 0.002772277
+##      A    B    C    D    E  class.error
+## A 3904    2    0    0    0 0.0005120328
+## B   11 2641    6    0    0 0.0063957863
+## C    0    9 2383    4    0 0.0054257095
+## D    0    0   23 2227    2 0.0111012433
+## E    0    0    2    6 2517 0.0031683168
 ```
 
 ```r
@@ -276,6 +282,11 @@ rf_predict <- predict(rf, testing)
 #Extract confusion matrix and the accuracy of the model when tested with #the test set
 rf_cm<- confusionMatrix(rf_predict, testing$classe)
 rfacc<- rf_cm[["overall"]][["Accuracy"]] *100
+rfacc
+```
+
+```
+## [1] 99.28632
 ```
 
 Combine the accuracy results into a table
@@ -283,9 +294,14 @@ Combine the accuracy results into a table
 ```r
 t<- data.frame()
 t<- cbind(gbmacc, cart_acc, rfacc)
+t
 ```
-The results how that random forest has the best predictive ability so we will use random forest to make final prediction. 
 
+```
+##        gbmacc cart_acc    rfacc
+## [1,] 96.48258 50.26338 99.28632
+```
+The results how that random forest has the highest accuracy so we will use random forest to make final prediction. 
 
 ## 3. Predicting on the test set.
 We can predict the outcome (How a person in each case is predicted to perform). Outcome of each case would be A,B,C,D or E depending upon the prediction. As random forest model has the best accuracy , we use rf to predict the outcome of our test cases.
@@ -300,3 +316,7 @@ rf_final
 ##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
 ## Levels: A B C D E
 ```
+
+###Out of Sample Error
+Out of sample error is estimated as 1 - accuracy for predictions for cross-validation set. 
+So out of sample error for the final model is 1- 0.992 = 0.0078
