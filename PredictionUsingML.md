@@ -18,8 +18,12 @@ This project is aimed to predict the manner in which the people exercise. The da
 
 Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predic how pepople in the "test" group would exercise (Class A-E).
 
-##1. Data dowload and cleaning
+## 1. Data dowload and cleaning
 Install the libraries needed for this analysis
+
+```r
+library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
+```
 
 ```
 ## Warning: package 'dplyr' was built under R version 3.6.3
@@ -87,7 +91,7 @@ NearZ <- nearZeroVar(test)
 ```
 We will keep the testdata for validation and build and test the model on traindata.
 
-##2. Building Model
+## 2. Building Model
 Split train data into testing and training data using "classe" variable
 
 ```r
@@ -98,7 +102,7 @@ testing <- train[-Index,]
 
 We will build 3 models using different ML algorithms and use the best model for prediction.
 
-###2.1. Cart (Classification and Regression Treess)
+### 2.1. Cart (Classification and Regression Treess)
 
 ```r
 #Build a model using training data
@@ -112,7 +116,7 @@ cart_acc
 ```
 
 ```
-## [1] 50.26338
+## [1] 49.19286
 ```
 Use rattle library to plot the decision tree of the final model.
 
@@ -148,7 +152,7 @@ fancyRpartPlot(cart$finalModel)
 
 ![](PredictionUsingML_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-###2.2. Gbm Model 
+### 2.2. Gbm Model 
 
 ```r
 #Build a model using training data
@@ -173,15 +177,15 @@ gbm
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa    
-##   1                   50      0.7494357  0.6822006
-##   1                  100      0.8174994  0.7689336
-##   1                  150      0.8521509  0.8128781
-##   2                   50      0.8523685  0.8128948
-##   2                  100      0.9063103  0.8813916
-##   2                  150      0.9333184  0.9156002
-##   3                   50      0.8931345  0.8646568
-##   3                  100      0.9419807  0.9265683
-##   3                  150      0.9611987  0.9509099
+##   1                   50      0.7515486  0.6850100
+##   1                  100      0.8200482  0.7722684
+##   1                  150      0.8533889  0.8144988
+##   2                   50      0.8539707  0.8149990
+##   2                  100      0.9068204  0.8820900
+##   2                  150      0.9313533  0.9131516
+##   3                   50      0.8956101  0.8678312
+##   3                  100      0.9405986  0.9248405
+##   3                  150      0.9598894  0.9492491
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## 
@@ -201,10 +205,10 @@ gbmacc
 ```
 
 ```
-## [1] 96.48258
+## [1] 95.87086
 ```
 
-###2.3. Random Forest Model
+### 2.3. Random Forest Model
 
 ```r
 library(randomForest)
@@ -254,14 +258,14 @@ rf <- randomForest(classe ~., data=training); rf
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 7
 ## 
-##         OOB estimate of  error rate: 0.47%
+##         OOB estimate of  error rate: 0.53%
 ## Confusion matrix:
 ##      A    B    C    D    E  class.error
 ## A 3904    2    0    0    0 0.0005120328
-## B   11 2641    6    0    0 0.0063957863
-## C    0    9 2383    4    0 0.0054257095
-## D    0    0   23 2227    2 0.0111012433
-## E    0    0    2    6 2517 0.0031683168
+## B   13 2641    4    0    0 0.0063957863
+## C    0   14 2380    2    0 0.0066777963
+## D    0    0   27 2223    2 0.0128774423
+## E    0    0    1    8 2516 0.0035643564
 ```
 
 ```r
@@ -286,7 +290,7 @@ rfacc
 ```
 
 ```
-## [1] 99.28632
+## [1] 99.57519
 ```
 
 Combine the accuracy results into a table
@@ -299,7 +303,7 @@ t
 
 ```
 ##        gbmacc cart_acc    rfacc
-## [1,] 96.48258 50.26338 99.28632
+## [1,] 95.87086 49.19286 99.57519
 ```
 The results how that random forest has the highest accuracy so we will use random forest to make final prediction. 
 
@@ -317,6 +321,9 @@ rf_final
 ## Levels: A B C D E
 ```
 
-###Out of Sample Error
+### Out of Sample Error
 Out of sample error is estimated as 1 - accuracy for predictions for cross-validation set. 
 So out of sample error for the final model is 1- 0.992 = 0.0078
+
+### Cross Validation
+I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting.
