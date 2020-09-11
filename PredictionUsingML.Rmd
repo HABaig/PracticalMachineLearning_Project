@@ -20,9 +20,9 @@ This project is aimed to predict the manner in which the people exercise. The da
 
 Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predic how pepople in the "test" group would exercise (Class A-E).
 
-##1. Data dowload and cleaning
+## 1. Data dowload and cleaning
 Install the libraries needed for this analysis
-```{r, echo=FALSE}
+```{r, echo=TRUE}
 library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
 ```
 
@@ -46,7 +46,7 @@ NearZ <- nearZeroVar(test)
 ```
 We will keep the testdata for validation and build and test the model on traindata.
 
-##2. Building Model
+## 2. Building Model
 Split train data into testing and training data using "classe" variable
 ```{r}
 Index <- createDataPartition(train$classe, p = 0.7, list = FALSE)
@@ -56,7 +56,7 @@ testing <- train[-Index,]
 
 We will build 3 models using different ML algorithms and use the best model for prediction.
 
-###2.1. Cart (Classification and Regression Treess)
+### 2.1. Cart (Classification and Regression Treess)
 ```{r}
 #Build a model using training data
 cart <- train( classe ~ .,data=training,  method='rpart')
@@ -73,7 +73,7 @@ library(rattle)
 fancyRpartPlot(cart$finalModel)
 ```
 
-###2.2. Gbm Model 
+### 2.2. Gbm Model 
 ```{r}
 #Build a model using training data
 set.seed(123)
@@ -90,7 +90,7 @@ gbmacc<- gbm_cm[["overall"]][["Accuracy"]]*100
 gbmacc
 ```
 
-###2.3. Random Forest Model
+### 2.3. Random Forest Model
 ```{r}
 library(randomForest)
 #Build a model using training data
@@ -128,6 +128,9 @@ rf_final <- predict(rf, test)
 rf_final
 ```
 
-###Out of Sample Error
+### Out of Sample Error
 Out of sample error is estimated as 1 - accuracy for predictions for cross-validation set. 
 So out of sample error for the final model is 1- 0.992 = 0.0078
+
+### Cross Validation
+I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting.
