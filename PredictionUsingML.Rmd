@@ -18,11 +18,11 @@ This project is aimed to predict the manner in which the people exercise. The da
  *  D: lowering the dumbbell only halfway. 
  *  E: and throwing the hips to the front.
 
-Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predic how pepople in the "test" group would exercise (Class A-E).
+Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predict how pepople in the "test" group would exercise (Class A-E).
 
 ## 1. Data dowload and cleaning
 Install the libraries needed for this analysis
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
 ```
 
@@ -32,7 +32,7 @@ traindata <- read.csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/p
 testdata <- read.csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"),header=TRUE)
 ```
 The first seven coloumns contain information that is not useful for our model. Remove first seven coloumns. Additionally, there are many varibales with many empty slots; remove the variables that have 30% or more empty slots.
-```{r}
+```{r, echo=FALSE}
 train <- traindata[, -c(1:7)]
 train <-  train %>%  discard(~sum(is.na(.x))/length(.x)* 100 >= 30)
 #Also remove near zero varibles
