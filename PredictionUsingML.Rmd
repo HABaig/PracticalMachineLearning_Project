@@ -133,4 +133,4 @@ Out of sample error is estimated as 1 - accuracy for predictions for cross-valid
 So out of sample error for the final model is 1- 0.992 = 0.0078
 
 ### Cross Validation
-I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting.
+I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting. there is no need to cross validate.
