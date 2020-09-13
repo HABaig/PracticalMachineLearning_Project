@@ -16,14 +16,10 @@ This project is aimed to predict the manner in which the people exercise. The da
  *  D: lowering the dumbbell only halfway. 
  *  E: and throwing the hips to the front.
 
-Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predic how pepople in the "test" group would exercise (Class A-E).
+Class 'A' corresponds to the specified execution of the exercise, whereas the other four classes correspond to common mistakes. The goal of this project is to predict how pepople in the "test" group would exercise (Class A-E).
 
 ## 1. Data dowload and cleaning
 Install the libraries needed for this analysis
-
-```r
-library(readr); library(dplyr); library(purrr); library(tidyr); library(caret) 
-```
 
 ```
 ## Warning: package 'dplyr' was built under R version 3.6.3
@@ -77,18 +73,6 @@ testdata <- read.csv(url("https://d396qusza40orc.cloudfront.net/predmachlearn/pm
 ```
 The first seven coloumns contain information that is not useful for our model. Remove first seven coloumns. Additionally, there are many varibales with many empty slots; remove the variables that have 30% or more empty slots.
 
-```r
-train <- traindata[, -c(1:7)]
-train <-  train %>%  discard(~sum(is.na(.x))/length(.x)* 100 >= 30)
-#Also remove near zero varibles
-NearZ <- nearZeroVar(train)
-train <- train[, -NearZ]  
-
-test <- testdata[, -c(1:7)]
-test <-  test %>%   discard(~sum(is.na(.x))/length(.x)* 100 >= 30)
-NearZ <- nearZeroVar(test)
-#There are no near zero variables
-```
 We will keep the testdata for validation and build and test the model on traindata.
 
 ## 2. Building Model
@@ -116,7 +100,7 @@ cart_acc
 ```
 
 ```
-## [1] 49.19286
+## [1] 49.26083
 ```
 Use rattle library to plot the decision tree of the final model.
 
@@ -177,15 +161,15 @@ gbm
 ## Resampling results across tuning parameters:
 ## 
 ##   interaction.depth  n.trees  Accuracy   Kappa    
-##   1                   50      0.7515486  0.6850100
-##   1                  100      0.8200482  0.7722684
-##   1                  150      0.8533889  0.8144988
-##   2                   50      0.8539707  0.8149990
-##   2                  100      0.9068204  0.8820900
-##   2                  150      0.9313533  0.9131516
-##   3                   50      0.8956101  0.8678312
-##   3                  100      0.9405986  0.9248405
-##   3                  150      0.9598894  0.9492491
+##   1                   50      0.7556954  0.6903591
+##   1                  100      0.8213583  0.7739070
+##   1                  150      0.8521504  0.8129302
+##   2                   50      0.8569541  0.8188094
+##   2                  100      0.9039814  0.8784894
+##   2                  150      0.9288780  0.9100030
+##   3                   50      0.8967015  0.8692343
+##   3                  100      0.9397978  0.9238186
+##   3                  150      0.9586515  0.9476851
 ## 
 ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ## 
@@ -205,7 +189,7 @@ gbmacc
 ```
 
 ```
-## [1] 95.87086
+## [1] 95.61597
 ```
 
 ### 2.3. Random Forest Model
@@ -258,14 +242,14 @@ rf <- randomForest(classe ~., data=training); rf
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 7
 ## 
-##         OOB estimate of  error rate: 0.53%
+##         OOB estimate of  error rate: 0.58%
 ## Confusion matrix:
-##      A    B    C    D    E  class.error
-## A 3904    2    0    0    0 0.0005120328
-## B   13 2641    4    0    0 0.0063957863
-## C    0   14 2380    2    0 0.0066777963
-## D    0    0   27 2223    2 0.0128774423
-## E    0    0    1    8 2516 0.0035643564
+##      A    B    C    D    E class.error
+## A 3902    3    0    1    0 0.001024066
+## B   16 2633    9    0    0 0.009405568
+## C    0   18 2378    0    0 0.007512521
+## D    0    0   24 2227    1 0.011101243
+## E    0    0    2    5 2518 0.002772277
 ```
 
 ```r
@@ -290,7 +274,7 @@ rfacc
 ```
 
 ```
-## [1] 99.57519
+## [1] 99.37128
 ```
 
 Combine the accuracy results into a table
@@ -303,7 +287,7 @@ t
 
 ```
 ##        gbmacc cart_acc    rfacc
-## [1,] 95.87086 49.19286 99.57519
+## [1,] 95.61597 49.26083 99.37128
 ```
 The results how that random forest has the highest accuracy so we will use random forest to make final prediction. 
 
@@ -326,4 +310,4 @@ Out of sample error is estimated as 1 - accuracy for predictions for cross-valid
 So out of sample error for the final model is 1- 0.992 = 0.0078
 
 ### Cross Validation
-I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting.
+I used random forest model for my predictive mode. As random forest uses multiple bagging methods which prevents over fitting. there is no need to cross validate.
